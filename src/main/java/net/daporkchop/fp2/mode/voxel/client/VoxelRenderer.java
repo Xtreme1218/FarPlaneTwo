@@ -55,6 +55,17 @@ public abstract class VoxelRenderer extends AbstractFarRenderer<VoxelPos, VoxelT
         return ranges;
     }
 
+    public static class AMDCompatibility extends VoxelRenderer {
+        public AMDCompatibility(@NonNull IFarClientContext<VoxelPos, VoxelTile> context) {
+            super(context);
+        }
+
+        @Override
+        protected IFarRenderStrategy<VoxelPos, VoxelTile> strategy0() {
+            return new AMDCompatibilityVoxelRenderStrategy();
+        }
+    }
+
     public static class ShaderMultidraw extends VoxelRenderer {
         public ShaderMultidraw(@NonNull IFarClientContext<VoxelPos, VoxelTile> context) {
             super(context);

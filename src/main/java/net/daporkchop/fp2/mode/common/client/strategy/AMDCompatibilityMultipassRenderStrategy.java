@@ -109,7 +109,6 @@ public abstract class AMDCompatibilityMultipassRenderStrategy<POS extends IFarPo
     public void deleteRenderData(long renderData) {
         int pointer = _renderdata_pointer(renderData);
         if (pointer >= 0) { //erase node if needed
-            _renderdata_pointer(renderData, -1);
             this.nodeAllocator.free(pointer);
 
             if (this.nodes[pointer] == null) {
@@ -273,6 +272,12 @@ public abstract class AMDCompatibilityMultipassRenderStrategy<POS extends IFarPo
 
         public CommandBuffer() {
             super(POSITION_SIZE_BYTES);
+        }
+
+        @Override
+        public IDrawCommandBuffer begin() {
+            this.commands.clear();
+            return super.begin();
         }
 
         @Override

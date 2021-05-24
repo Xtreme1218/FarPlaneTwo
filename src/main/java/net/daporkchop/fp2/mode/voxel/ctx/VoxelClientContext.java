@@ -21,13 +21,15 @@
 package net.daporkchop.fp2.mode.voxel.ctx;
 
 import lombok.NonNull;
+import net.daporkchop.fp2.compat.of.OFHelper;
 import net.daporkchop.fp2.mode.api.IFarRenderMode;
 import net.daporkchop.fp2.mode.api.client.IFarRenderer;
 import net.daporkchop.fp2.mode.common.ctx.AbstractFarClientContext;
 import net.daporkchop.fp2.mode.voxel.VoxelPos;
 import net.daporkchop.fp2.mode.voxel.VoxelTile;
 import net.daporkchop.fp2.mode.voxel.client.VoxelRenderer;
-import net.daporkchop.fp2.compat.of.OFHelper;
+
+import static net.daporkchop.fp2.compat.amd.AMDCompatibilityHelperClient.*;
 
 /**
  * @author DaPorkchop_
@@ -39,7 +41,9 @@ public class VoxelClientContext extends AbstractFarClientContext<VoxelPos, Voxel
 
     @Override
     protected IFarRenderer renderer0(IFarRenderer old) {
-        if (OFHelper.of_Config_isShaders()) {
+        if (WORKAROUND_AMD_SLOW_BASEVERTEX) {
+            return old instanceof VoxelRenderer.AMDCompatibility ? old : new VoxelRenderer.AMDCompatibility(this);
+        } else if (OFHelper.of_Config_isShaders()) {
             return old instanceof VoxelRenderer.TransformFeedback ? old : new VoxelRenderer.TransformFeedback(this);
         } else {
             return old instanceof VoxelRenderer.ShaderMultidraw ? old : new VoxelRenderer.ShaderMultidraw(this);

@@ -425,4 +425,11 @@ public class Constants {
         }
         FMLCommonHandler.instance().exitJava(1, true);
     }
+
+    public static void warning(String msg) {
+        bigWarning(msg);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            JOptionPane.showMessageDialog(null, msg, null, JOptionPane.WARNING_MESSAGE);
+        }
+    }
 }

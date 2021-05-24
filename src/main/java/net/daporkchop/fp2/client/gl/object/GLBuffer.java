@@ -21,13 +21,13 @@
 package net.daporkchop.fp2.client.gl.object;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.Getter;
 import lombok.NonNull;
 import net.daporkchop.fp2.util.DirectBufferReuse;
 import net.daporkchop.lib.unsafe.PUnsafe;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;
@@ -76,7 +76,7 @@ public class GLBuffer extends GLObject implements IGLBuffer {
     /**
      * Sets the capacity of this buffer.
      * <p>
-     * If the buffer already has the requested capacity, nothing is changed. Otherwise, the buffer is resized and its contents are now undefined.
+     * After calling this method, the buffer's contents are undefined.
      *
      * @param capacity the new capacity
      */
@@ -259,6 +259,7 @@ public class GLBuffer extends GLObject implements IGLBuffer {
 
     /**
      * Maps the contents of this buffer into client address space.
+     *
      * @param access one of {@link GL15#GL_READ_ONLY}, {@link GL15#GL_WRITE_ONLY} or {@link GL15#GL_READ_WRITE}
      * @return the memory address of the mapped buffer contents
      */

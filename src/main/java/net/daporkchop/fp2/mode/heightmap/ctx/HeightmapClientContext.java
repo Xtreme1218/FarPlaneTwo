@@ -28,7 +28,10 @@ import net.daporkchop.fp2.mode.heightmap.HeightmapPos;
 import net.daporkchop.fp2.mode.heightmap.HeightmapTile;
 import net.daporkchop.fp2.mode.heightmap.client.HeightmapRenderer;
 
+import java.util.Locale;
+
 import static net.daporkchop.fp2.compat.amd.AMDCompatibilityHelperClient.*;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author DaPorkchop_
@@ -40,7 +43,7 @@ public class HeightmapClientContext extends AbstractFarClientContext<HeightmapPo
 
     @Override
     protected IFarRenderer renderer0(IFarRenderer old) {
-        if (WORKAROUND_AMD_SLOW_BASEVERTEX) {
+        if (true || WORKAROUND_AMD_SLOW_BASEVERTEX) {
             return old instanceof HeightmapRenderer.AMDCompatibility ? old : new HeightmapRenderer.AMDCompatibility(this);
         } else {
             return old instanceof HeightmapRenderer.ShaderMultidraw ? old : new HeightmapRenderer.ShaderMultidraw(this);

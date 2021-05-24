@@ -37,9 +37,9 @@ public class AMDCompatibilityHelperClient {
     public final boolean WORKAROUND_AMD_SLOW_BASEVERTEX = slowBaseVertex();
 
     private boolean slowBaseVertex() {
-        String brand = (glGetString(GL_VENDOR) + ' ' + glGetString(GL_VERSION) + ' ' + glGetString(GL_RENDERER)).toLowerCase(Locale.US);
+        String brand = glGetString(GL_VENDOR) + ' ' + glGetString(GL_VERSION) + ' ' + glGetString(GL_RENDERER);
 
-        return (brand.contains("amd") || brand.contains("ati")) //detect AMD gpu
-               && !brand.contains("mesa"); //mesa actually works correctly, so we don't need to use the workaround there
+        return (brand.contains("AMD") || brand.contains("ATI")) //detect AMD gpu
+               && !brand.contains("Mesa"); //mesa actually works correctly, so we don't need to use the workaround there
     }
 }

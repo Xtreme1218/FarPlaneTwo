@@ -36,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GLContext;
 
 import static net.daporkchop.fp2.client.ClientConstants.*;
+import static net.daporkchop.fp2.compat.amd.AMDCompatibilityHelperClient.*;
 import static net.daporkchop.fp2.compat.of.OFHelper.*;
 import static net.daporkchop.fp2.util.Constants.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -69,6 +70,12 @@ public class FP2Client {
             } else {
                 unsupported("Unable to enable the OpenGL stencil buffer!\nRequired by FarPlaneTwo.");
             }
+        }
+
+        if (WORKAROUND_AMD_SLOW_BASEVERTEX) {
+            warning("FarPlaneTwo has detected that you are using the official driver for AMD GPUs.\n"
+                    + "We will attempt to enable a compatibility mode in order to work around a driver bug.\n"
+                    + "Please note that this may incur a significant loss in performance.");
         }
 
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
