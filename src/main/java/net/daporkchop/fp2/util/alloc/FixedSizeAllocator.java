@@ -67,6 +67,8 @@ public final class FixedSizeAllocator extends BitSet implements Allocator { //ex
     @Override
     public void free(long address) {
         int slot = toInt(address / this.blockSize);
+        checkArg(this.get(slot), "address not allocated: %d", address);
+
         this.clear(slot);
         if (slot < this.fromIndex) {
             this.fromIndex = slot;

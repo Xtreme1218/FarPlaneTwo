@@ -57,6 +57,17 @@ public abstract class HeightmapRenderer extends AbstractFarRenderer<HeightmapPos
         return ranges;
     }
 
+    public static class AMDCompatibility extends HeightmapRenderer {
+        public AMDCompatibility(@NonNull IFarClientContext<HeightmapPos, HeightmapTile> context) {
+            super(context);
+        }
+
+        @Override
+        protected IFarRenderStrategy<HeightmapPos, HeightmapTile> strategy0() {
+            return new AMDCompatibilityHeightmapRenderStrategy();
+        }
+    }
+
     public static class ShaderMultidraw extends HeightmapRenderer {
         public ShaderMultidraw(@NonNull IFarClientContext<HeightmapPos, HeightmapTile> context) {
             super(context);

@@ -18,32 +18,28 @@
  *
  */
 
-package net.daporkchop.fp2.mode.heightmap.ctx;
+package net.daporkchop.fp2.compat.amd;
 
-import lombok.NonNull;
-import net.daporkchop.fp2.mode.api.IFarRenderMode;
-import net.daporkchop.fp2.mode.api.client.IFarRenderer;
-import net.daporkchop.fp2.mode.common.ctx.AbstractFarClientContext;
-import net.daporkchop.fp2.mode.heightmap.HeightmapPos;
-import net.daporkchop.fp2.mode.heightmap.HeightmapTile;
-import net.daporkchop.fp2.mode.heightmap.client.HeightmapRenderer;
+import lombok.experimental.UtilityClass;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static net.daporkchop.fp2.compat.amd.AMDCompatibilityHelperClient.*;
+import java.util.Locale;
+
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author DaPorkchop_
  */
-public class HeightmapClientContext extends AbstractFarClientContext<HeightmapPos, HeightmapTile> {
-    public HeightmapClientContext(@NonNull IFarRenderMode<HeightmapPos, HeightmapTile> mode) {
-        super(mode);
-    }
+@UtilityClass
+@SideOnly(Side.CLIENT)
+public class AMDCompatibilityHelperClient {
+    public final boolean WORKAROUND_AMD_SLOW_BASEVERTEX = slowBaseVertex();
 
-    @Override
-    protected IFarRenderer renderer0(IFarRenderer old) {
-        if (WORKAROUND_AMD_SLOW_BASEVERTEX) {
-            return old instanceof HeightmapRenderer.AMDCompatibility ? old : new HeightmapRenderer.AMDCompatibility(this);
-        } else {
-            return old instanceof HeightmapRenderer.ShaderMultidraw ? old : new HeightmapRenderer.ShaderMultidraw(this);
-        }
+    private boolean slowBaseVertex() {
+        String brand = (glGetString(GL_VENDOR) + ' ' + glGetString(GL_VERSION) + ' ' + glGetString(GL_RENDERER)).toLowerCase(Locale.US);
+
+        return (brand.contains("amd") || brand.contains("ati")) //detect AMD gpu
+               && !brand.contains("mesa"); //mesa actually works correctly, so we don't need to use the workaround there
     }
 }

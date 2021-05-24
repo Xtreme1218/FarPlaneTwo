@@ -20,35 +20,8 @@
 
 package net.daporkchop.fp2.mode.heightmap.client;
 
-import lombok.NonNull;
-import net.daporkchop.fp2.client.DrawMode;
-import net.daporkchop.fp2.client.TexUVs;
-import net.daporkchop.fp2.client.gl.shader.ShaderProgram;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockRenderLayer;
-
-import static net.daporkchop.fp2.client.ClientConstants.*;
-import static org.lwjgl.opengl.GL20.*;
-
 /**
  * @author DaPorkchop_
  */
 public class ShaderBasedIndexedMultidrawHeightmapRenderStrategy extends AbstractIndexedMultidrawHeightmapRenderStrategy implements IShaderBasedMultipassHeightmapRenderStrategy {
-    @Override
-    public void render(@NonNull BlockRenderLayer layer, boolean pre) {
-        if (layer == BlockRenderLayer.CUTOUT && !pre) {
-            ((AbstractTexture) mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE)).setBlurMipmapDirect(false, mc.gameSettings.mipmapLevels > 0);
-
-            try (DrawMode mode = DrawMode.SHADER.begin()) {
-                this.renderSolid(this.passes[0]);
-                this.renderCutout(this.passes[1]);
-                this.renderTransparent(this.passes[2]);
-            }
-
-            mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-        }
-    }
 }

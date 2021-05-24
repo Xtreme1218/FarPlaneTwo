@@ -21,10 +21,16 @@
 package net.daporkchop.fp2.mode.common.client.strategy;
 
 import lombok.NonNull;
+import net.daporkchop.fp2.client.DrawMode;
 import net.daporkchop.fp2.client.gl.commandbuffer.IDrawCommandBuffer;
 import net.daporkchop.fp2.client.gl.shader.ShaderProgram;
 import net.daporkchop.fp2.mode.api.IFarPos;
 import net.daporkchop.fp2.mode.api.IFarTile;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
+
+import static net.daporkchop.fp2.client.ClientConstants.*;
 
 /**
  * @author DaPorkchop_
@@ -74,4 +80,19 @@ public interface IShaderBasedMultipassRenderStrategy<POS extends IFarPos, T exte
      * @return the shader used for preparing the stencil buffer
      */
     ShaderProgram stencilShader();
+
+    @Override
+    default void render(@NonNull BlockRenderLayer layer, boolean pre) {
+        if (layer == BlockRenderLayer.CUTOUT && !pre) {
+            ((AbstractTexture) mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE)).setBlurMipmapDirect(false, mc.gameSettings.mipmapLevels > 0);
+
+            try (DrawMode mode = DrawMode.SHADER.begin()) {
+                this.renderSolid(this.passes()[0]);
+                this.renderCutout(this.passes()[1]);
+                this.renderTransparent(this.passes()[2]);
+            }
+
+            mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+        }
+    }
 }

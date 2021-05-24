@@ -31,8 +31,11 @@ import java.util.function.Consumer;
 
 import static net.daporkchop.fp2.client.gl.OpenGL.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL32.*;
 import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL42.*;
 import static org.lwjgl.opengl.GL43.*;
 
 /**
@@ -85,6 +88,74 @@ public class IndirectIndexedMultidrawCommandBuffer extends IndirectMultidrawComm
 
     @Override
     protected void multidraw0() {
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, POSITION_SIZE_BYTES, this.size, ENTRY_SIZE_BYTES);
+        for (int i = 0; i < this.size; i++) {
+            long cmd = this.addr + (long) i * ENTRY_SIZE_BYTES + POSITION_SIZE_BYTES;
+
+            //functionally identical to original:
+            /*glDrawElementsInstancedBaseVertexBaseInstance(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE,
+                    PUnsafe.getInt(cmd + 1 * INT_SIZE),
+                    PUnsafe.getInt(cmd + 3 * INT_SIZE),
+                    PUnsafe.getInt(cmd + 4 * INT_SIZE));*/
+
+            //functionally identical to original, except that the instance number passed to the shader is wrong:
+            /*glDrawElementsBaseVertex(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE,
+                    PUnsafe.getInt(cmd + 3 * INT_SIZE));*/
+
+            //functionally identical to original, except that the instance number passed to the shader is wrong AND it uses the wrong vertices:
+            /*glDrawElements(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE);*/
+
+            /*glDrawRangeElements(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 3 * INT_SIZE),
+                    PUnsafe.getInt(cmd + 3 * INT_SIZE) + 1000,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE);*/
+
+            /*glDrawRangeElementsBaseVertex(
+                    GL_TRIANGLES,
+                    0,
+                    1000,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE,
+                    PUnsafe.getInt(cmd + 3 * INT_SIZE));*/
+
+            //same as above
+            /*glDrawElementsInstancedBaseInstance(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE,
+                    1,
+                    PUnsafe.getInt(cmd + 4 * INT_SIZE));*/
+
+            //same as above
+            /*glDrawElementsBaseVertex(
+                    GL_TRIANGLES,
+                    PUnsafe.getInt(cmd + 0 * INT_SIZE),
+                    GL_UNSIGNED_SHORT,
+                    (long) PUnsafe.getInt(cmd + 2 * INT_SIZE) * SHORT_SIZE,
+                    48814);*/
+
+            glDrawArraysInstancedBaseInstance(
+                    GL_TRIANGLES,
+                    0,
+                    6,
+                    1,
+                    PUnsafe.getInt(cmd + 4 * INT_SIZE));
+        }
     }
 }
