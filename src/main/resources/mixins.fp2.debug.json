@@ -4,7 +4,9 @@
   "package": "net.daporkchop.fp2.debug.asm",
   "refmap": "mixins.fp2.refmap.json",
   "client": [
-    "client.renderer.MixinRenderGlobal"
+    "client.renderer.texture.MixinTextureUtil",
+    "client.renderer.MixinRenderGlobal",
+    "client.MixinMinecraft"
   ],
   "mixins": [
   ]
