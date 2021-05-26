@@ -18,45 +18,23 @@
  *
  */
 
-package net.daporkchop.fp2.debug.asm.client.renderer.texture;
+package net.daporkchop.fp2.asm.client.renderer.texture;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
- * @author Barteks2x
+ * @author DaPorkchop_
  */
 @Mixin(TextureUtil.class)
 public abstract class MixinTextureUtil {
-    @Shadow
-    public static void deleteTexture(int textureId) {
-    }
-
-    @Shadow
-    static void bindTexture(int p_94277_0_) {
-    }
-
-    /**
-     * @author Barteks2x
-     */
-    @Overwrite
-    public static void allocateTextureImpl(int glTextureId, int mipmapLevels, int width, int height) {
-        synchronized (net.minecraftforge.fml.client.SplashProgress.class) {
-            //deleteTexture(glTextureId); // WTF forge?
-            bindTexture(glTextureId);
-        }
-        if (mipmapLevels >= 0) {
-            GlStateManager.glTexParameteri(3553, 33085, mipmapLevels);
-            GlStateManager.glTexParameteri(3553, 33082, 0);
-            GlStateManager.glTexParameteri(3553, 33083, mipmapLevels);
-            GlStateManager.glTexParameterf(3553, 34049, 0.0F);
-        }
-
-        for (int i = 0; i <= mipmapLevels; ++i) {
-            GlStateManager.glTexImage2D(3553, i, 6408, width >> i, height >> i, 0, 32993, 33639, null);
-        }
+    @Redirect(method = "Lnet/minecraft/client/renderer/texture/TextureUtil;allocateTextureImpl(IIII)V",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/texture/TextureUtil;deleteTexture(I)V"))
+    private static void fp2_allocateTextureImpl_dontDeleteTextureBeforeBindingIt_wtfMojang(int textureId) {
+        //seriously, who did this and why?!?
+        //why on earth would you delete a texture IMMEDIATELY before binding it?!?
     }
 }
